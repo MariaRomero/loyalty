@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/loyalty.iml" filepath="$PROJECT_DIR$/loyalty.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/loyalty.main.iml" filepath="$PROJECT_DIR$/.idea/modules/loyalty.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/loyalty.test.iml" filepath="$PROJECT_DIR$/.idea/modules/loyalty.test.iml" />
+    </modules>
+  </component>
+</project>
