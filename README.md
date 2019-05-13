@@ -15,7 +15,7 @@ In the real world - this would exist as a service, communicating over REST with 
 * Persistence is not required - the code should store it's state in memory and is not expected to survive restarts.
 * Multiple schemes can be running for one merchant concurrently.
 * When an account is due a payment the cheapest item in the scheme should be given away first.
-* Each item in a receipt can only be used once, one item cannot be used for both a stamp and a payment, nor can an item be used in multiple schemes.
+* Each item in a receipt can only be used once, one item cannot be used for both a stamp and a payment(reward), nor can an item be used in multiple schemes.
 
 
 ### Language
