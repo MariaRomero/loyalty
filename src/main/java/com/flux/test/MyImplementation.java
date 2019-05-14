@@ -2,54 +2,50 @@ package com.flux.test;
 
 import com.flux.test.model.*;
 //import org.json.simple.JSONArray;
-import org.json.simple.ItemList;
+import com.google.gson.Gson;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.json.simple.parser.ParseException;
 
-import java.io.Console;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class MyImplementation implements ImplementMe {
+
     @NotNull
     @Override
     public List<Scheme> getSchemes() {
-        return null;
+        final Gson gson = new Gson();
+        final List<Scheme> schemeAvail = new ArrayList<>();
+        JSONArray schemes = new JSONArray();
+        try {
+            schemes = (JSONArray) readFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        schemes.stream().forEach( scheme -> schemeAvail.add(gson.fromJson(scheme.toString(), Scheme.class)));
+
+        return schemeAvail;
     }
 
     @Override
-    public void setSchemes(@NotNull List<Scheme> list) {
+    public void setSchemes(@NotNull final List<Scheme> list) {
 
     }
 
-    public List jsonPar() {
-
-        JSONParser parser = new JSONParser();
-        List schemeAvail = new ArrayList<>();
-        try {
-            Object object = parser.parse(new FileReader("src/data/schemesAvailable.json"));
-            JSONArray schemes = (JSONArray)object;
-            schemes.stream().forEach( scheme -> schemeAvail.add(scheme));
-
-            return schemeAvail;
-
-        } catch (org.json.simple.parser.ParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return schemeAvail;
-
+    private Object readFile() throws IOException, ParseException {
+        final JSONParser parser = new JSONParser();
+        return parser.parse(new FileReader("src/data/schemesAvailable.json"));
     }
 
     /**
@@ -77,23 +73,32 @@ public class MyImplementation implements ImplementMe {
 //            response.first().stampsGiven shouldBe 4
 //            response.first().paymentsGiven shouldHaveSize 1
 //            response.first().paymentsGiven.first() shouldBe 100
-    public String calculateStamps(List<Item> schemeAvail) {
+    public List calculateStamps(List<Scheme> schemeAvail, Receipt receipt) {
 
-//        Scheme scheme = new Scheme()
-//        schemeAvail.stream().filter(s-> itemList.get(0)).forEach(System.out::println);
-        return schemeAvail.forEach(System.out::println);
+        for (int i = 0; i < schemeAvail.size() - 1; i++) {
+            if((schemeAvail.get(i).getSkus().get(i) == 1 && receipt.getItems().get(i).getSku() == 1);
+//            if (receipt.getItems()) {
+//                System.out.println(true);
+//            }else {
+//                System.out.println(false);
+//
+//            }
+        }
 
+        return schemeAvail;
     }
 
     @NotNull
     @Override
     public List<ApplyResponse> apply(@NotNull Receipt receipt) {
-        List<Item> schemeAvail = jsonPar();
-        calculateStamps(schemeAvail);
-//        private final Scheme schemeAvail = jsonPar();
+        List<Scheme> schemesAvail = getSchemes();
+//        System.out.println(schemeAvail);  [{"skus":["1","2","3","4"],"SchemeId":"10000000000","merchantId":"010101010101","maxStamps":"4"},
+//                                          {"skus":["5","6","7","8"],"SchemeId":"20000000000","merchantId":"010101010101","maxStamps":"4"}]
+
+        calculateStamps(schemesAvail, receipt);
         ApplyResponse response = new ApplyResponse(receipt.getMerchantId(), 1, 1, new ArrayList<>());
-    List<ApplyResponse> responses = new ArrayList<>();
-    responses.add(response);
+        List<ApplyResponse> responses = new ArrayList<>();
+        responses.add(response);
 
         return responses;
     }
