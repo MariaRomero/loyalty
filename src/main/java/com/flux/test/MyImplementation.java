@@ -1,16 +1,13 @@
 package com.flux.test;
 
 import com.flux.test.model.*;
-//import org.json.simple.JSONArray;
 import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
-
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,11 +35,6 @@ public class MyImplementation implements ImplementMe {
         return schemeAvail;
     }
 
-    @Override
-    public void setSchemes(@NotNull final List<Scheme> list) {
-
-    }
-
     private Object readFile() throws IOException, ParseException {
         final JSONParser parser = new JSONParser();
         return parser.parse(new FileReader("src/data/schemesAvailable.json"));
@@ -54,14 +46,7 @@ public class MyImplementation implements ImplementMe {
      *
      * Should return one `StateResponse` instance for each scheme
      */
-//    Receipt(id=e6b1da05-050e-4463-b981-72793d4977ac,
-//            accountId=33f862b4-3f02-47e0-b9b7-d7e44cf5716e,
-//            merchantId=c8ed317f-c27d-4415-a80b-188b23047294,
-//            items=[Item(sku=1, price=100, quantity=1),
-//            Item(sku=1, price=100, quantity=1),
-//            Item(sku=1, price=100, quantity=1),
-//            Item(sku=1, price=100, quantity=1),
-//            Item(sku=1, price=100, quantity=1)])
+
 
 //    Response[ApplyResponse(schemeId=dbf5f024-ea1e-4e11-a620-9589623237ed,
 //                           currentStampCount=1,
@@ -73,19 +58,54 @@ public class MyImplementation implements ImplementMe {
 //            response.first().stampsGiven shouldBe 4
 //            response.first().paymentsGiven shouldHaveSize 1
 //            response.first().paymentsGiven.first() shouldBe 100
-    public List calculateStamps(List<Scheme> schemeAvail, Receipt receipt) {
 
-        for (int i = 0; i < schemeAvail.size() - 1; i++) {
-            if((schemeAvail.get(i).getSkus().get(i) == 1 && receipt.getItems().get(i).getSku() == 1);
-//            if (receipt.getItems()) {
-//                System.out.println(true);
-//            }else {
-//                System.out.println(false);
-//
-//            }
+    //    Receipt(id=e6b1da05-050e-4463-b981-72793d4977ac,
+//            accountId=33f862b4-3f02-47e0-b9b7-d7e44cf5716e,
+//            merchantId=c8ed317f-c27d-4415-a80b-188b23047294,
+//            items=[
+//            Item(sku=1, price=100, quantity=1),
+//            Item(sku=2, price=200, quantity=1),
+//            Item(sku=1, price=100, quantity=1),
+//            Item(sku=1, price=100, quantity=1),
+//            Item(sku=1, price=100, quantity=1)])
+
+    private List<List<String>> getSkuFromSchemeList(List<Scheme> schemeAvail) {
+
+        List<List<String>> schemeSkus = new ArrayList<>();
+
+        for (int i = 0; i < schemeAvail.size(); i++ ) {
+            schemeSkus.add(schemeAvail.get(i).getSkus());
         }
 
-        return schemeAvail;
+//        System.out.println(schemeSkus);  [[1, 2, 3, 4], [5, 6, 7, 8]]
+        return schemeSkus;
+    }
+
+    private List<Item> getItemsListFromReceipt(Receipt receipt) {
+
+        List<Item> receiptItemsList = new ArrayList<>();
+
+        for (int i = 0; i < receipt.getItems().size(); i++ ) {
+            receiptItemsList.add(receipt.getItems().get(i));
+        }
+//        System.out.println(receiptItemsList);  [Item(sku=1, price=100, quantity=1),
+//                                                Item(sku=1, price=100, quantity=1),
+//                                                Item(sku=1, price=100, quantity=1),
+//                                                Item(sku=1, price=100, quantity=1),
+//                                                Item(sku=1, price=100, quantity=1)]
+        return receiptItemsList;
+    }
+
+
+    public List calculateStamps(List<Scheme> schemeAvail, Receipt receipt) {
+
+        List skusFromScheme = getSkuFromSchemeList(schemeAvail);
+        List itemFromReceipt = getItemsListFromReceipt(receipt);
+
+        // compare items
+        itemFromReceipt.forEach((n) -> System.out.println(n));
+
+        return itemFromReceipt;
     }
 
     @NotNull
@@ -100,7 +120,7 @@ public class MyImplementation implements ImplementMe {
         List<ApplyResponse> responses = new ArrayList<>();
         responses.add(response);
 
-        return responses;
+            return responses;
     }
 
     @NotNull
@@ -108,4 +128,10 @@ public class MyImplementation implements ImplementMe {
     public List<StateResponse> state(@NotNull UUID accountId) {
         return null;
     }
+
+    @Override
+    public void setSchemes(@NotNull List<Scheme> list) {
+
+    }
+
 }
