@@ -48,9 +48,8 @@ public class MyImplementation implements ImplementMe {
 
         List<List<String>> schemeSkus = new ArrayList<>();
 
-        for (int i = 0; i < schemeAvail.size(); i++ ) {
-            schemeSkus.add(schemeAvail.get(i).getSkus());
-        }
+        schemeAvail.stream().forEach(scheme -> schemeSkus.add(scheme.getSkus()));
+
         return schemeSkus;
     }
 
@@ -58,9 +57,7 @@ public class MyImplementation implements ImplementMe {
 
         List<Item> receiptItemsList = new ArrayList<>();
 
-        for (int i = 0; i < receipt.getItems().size(); i++ ) {
-            receiptItemsList.add(receipt.getItems().get(i));
-        }
+        receipt.getItems().stream().forEach(item -> receiptItemsList.add(item));
 
         return receiptItemsList;
     }
@@ -85,12 +82,9 @@ public class MyImplementation implements ImplementMe {
             int maxStamps = schemeAvail.get(i).getMaxStamps();
             currentSchemeId = schemeAvail.get(i).getId();
             List skuFromScheme = ((ArrayList) skusFromScheme.get(i));
-            for(int x = 0; x < itemsFromReceipt.size(); x++) {
-                if (skuFromScheme.contains(((Item) itemsFromReceipt.get(x)).getSku())) {
-                    itemsFromReceiptOnScheme.add((Item) itemsFromReceipt.get(x));
-                    stamps++;
-                }
-            }
+            addItemsFromReceiptOnScheme(itemsFromReceipt, skuFromScheme);
+            stamps++;
+
             if (stamps > maxStamps) {
                 awardReward();
                 return capStamps(maxStamps, stamps);
@@ -98,6 +92,15 @@ public class MyImplementation implements ImplementMe {
         }
         stampsCount = stamps;
         return stamps;
+    }
+
+    private void addItemsFromReceiptOnScheme(List itemsFromReceipt, List skuFromScheme) {
+        for(int x = 0; x < itemsFromReceipt.size(); x++) {
+            Item item = (Item) itemsFromReceipt.get(x);
+            if (skuFromScheme.contains((item).getSku())) {
+                itemsFromReceiptOnScheme.add(item);
+            }
+        }
     }
 
     private void awardReward() {
