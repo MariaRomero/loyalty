@@ -1,14 +1,14 @@
 [
     {
-        "SchemeId": "7dc53df5-703e-49b3-8670-b1c468f47f1f",
-        "merchantId": "7dc53df5-703e-49b3-8670-b1c468f47f1f",
+        "id": "7dc53df5-703e-49b3-8670-b1c468f47f1f",
+        "merchantId": "c8ed317f-c27d-4415-a80b-188b23047294",
         "maxStamps": "4",
-        "skus": ["1", "2", "3","4"]
+        "skus": ["1", "2", "3","4"],
     },
     {
-        "SchemeId": "7dc53df5-703e-49b3-8670-b1c468f47f2f",
+        "id": "ca2404f7-f205-4470-a9c9-cb5fb8c92fcd",
         "merchantId": "7dc53df5-703e-49b3-8670-b1c468f47f2f",
-        "maxStamps": "4",
-        "skus": ["5", "6", "7","8"]
+        "maxStamps": "5",
+        "skus": ["5", "6", "7","8"],
     }
 ]

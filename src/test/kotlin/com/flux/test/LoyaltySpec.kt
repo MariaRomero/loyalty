@@ -17,23 +17,21 @@ class LoyaltySpec : StringSpec() {
     val implementation: ImplementMe = MyImplementation()
 
     init {
-//        "Applies a stamp" {
-//            val receipt = Receipt(merchantId = merchantId, accountId = accountId, items = listOf(Item("1", 100, 1)))
-//
-//            val response = implementation.apply(receipt)
-//
-//            response shouldHaveSize (1)
-//            response.first().stampsGiven shouldBe 1
-//            response.first().currentStampCount shouldBe 1
-//            response.first().paymentsGiven shouldHaveSize 0
-//        }
+        "Applies a stamp" {
+            val receipt = Receipt(merchantId = merchantId, accountId = accountId, items = listOf(Item("1", 100, 1)))
+
+            val response = implementation.apply(receipt)
+
+            response shouldHaveSize (1)
+            response.first().stampsGiven shouldBe 1
+            response.first().currentStampCount shouldBe 1
+            response.first().paymentsGiven shouldHaveSize 0
+        }
 
         "Triggers a redemption" {
-            val receipt =
-                Receipt(merchantId = merchantId, accountId = accountId, items = 1.rangeTo(5).map { Item("1", 100, 1) })
+            val receipt = Receipt(merchantId = merchantId, accountId = accountId, items = 1.rangeTo(5).map { Item("1", 100, 1) })
+
             val response = implementation.apply(receipt)
-            println("this is the response =====")
-            print(response)
 
             response shouldHaveSize (1)
             response.first().stampsGiven shouldBe 4
@@ -41,26 +39,26 @@ class LoyaltySpec : StringSpec() {
             response.first().paymentsGiven shouldHaveSize 1
             response.first().paymentsGiven.first() shouldBe 100
         }
-//
-//        "Stores the current state for an account" {
-//            val receipt = Receipt(merchantId = merchantId, accountId = accountId, items = listOf(Item("1", 100, 1)))
-//
-//            implementation.apply(receipt)
-//            val response = implementation.state(accountId)
-//
-//            response shouldHaveSize (1)
-//            response.first().currentStampCount shouldBe 1
-//            response.first().payments shouldHaveSize 0
-//        }
+
+        "Stores the current state for an account" {
+            val receipt = Receipt(merchantId = merchantId, accountId = accountId, items = listOf(Item("1", 100, 1)))
+
+            implementation.apply(receipt)
+            val response = implementation.state(accountId)
+
+            response shouldHaveSize (1)
+            response.first().currentStampCount shouldBe 1
+            response.first().payments shouldHaveSize 0
+        }
     }
 
     override fun isolationMode() = IsolationMode.InstancePerTest
 
     companion object {
         private val accountId: AccountId = UUID.randomUUID()
-        private val merchantId: MerchantId = UUID.randomUUID()
+        private val merchantId: MerchantId = UUID.fromString("c8ed317f-c27d-4415-a80b-188b23047294")
 
-        private val schemeId: SchemeId = UUID.randomUUID()
+        private val schemeId: SchemeId = UUID.fromString("7dc53df5-703e-49b3-8670-b1c468f47f1f")
         private val schemes = listOf(Scheme(schemeId, merchantId, 4, listOf("1")))
     }
 

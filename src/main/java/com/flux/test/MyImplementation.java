@@ -10,11 +10,20 @@ import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MyImplementation implements ImplementMe {
+
+    List<Long> rewardsGiven = new ArrayList<>();
+    List<Item> itemsFromReceiptOnScheme = new ArrayList<>();
+    Integer stampsCount = 0;
+    UUID currentSchemeId;
+
+
+    private Object readFile() throws IOException, ParseException {
+        final JSONParser parser = new JSONParser();
+        return parser.parse(new FileReader("src/data/schemesAvailable.json"));
+    }
 
     @NotNull
     @Override
@@ -35,30 +44,6 @@ public class MyImplementation implements ImplementMe {
         return schemeAvail;
     }
 
-    private Object readFile() throws IOException, ParseException {
-        final JSONParser parser = new JSONParser();
-        return parser.parse(new FileReader("src/data/schemesAvailable.json"));
-    }
-
-    /**
-     * Retrieve and return the current state for an account for all the active schemes.  If they have never used a
-     * scheme before then a zero state should be returned (ie 0 stamps given, 0 payments, current stamp as 0.
-     *
-     * Should return one `StateResponse` instance for each scheme
-     */
-
-
-//    Response[ApplyResponse(schemeId=dbf5f024-ea1e-4e11-a620-9589623237ed,
-//                           currentStampCount=1,
-//                           stampsGiven=1,
-//                           paymentsGiven=[])]
-//
-//   response shouldHaveSize (1)
-//            response.first().currentStampCount shouldBe 0
-//            response.first().stampsGiven shouldBe 4
-//            response.first().paymentsGiven shouldHaveSize 1
-//            response.first().paymentsGiven.first() shouldBe 100
-
     private List<List<String>> getSkuFromSchemeList(List<Scheme> schemeAvail) {
 
         List<List<String>> schemeSkus = new ArrayList<>();
@@ -66,8 +51,6 @@ public class MyImplementation implements ImplementMe {
         for (int i = 0; i < schemeAvail.size(); i++ ) {
             schemeSkus.add(schemeAvail.get(i).getSkus());
         }
-
-//        System.out.println(schemeSkus);  [[1, 2, 3, 4], [5, 6, 7, 8]]
         return schemeSkus;
     }
 
@@ -78,84 +61,86 @@ public class MyImplementation implements ImplementMe {
         for (int i = 0; i < receipt.getItems().size(); i++ ) {
             receiptItemsList.add(receipt.getItems().get(i));
         }
-//        System.out.println(receiptItemsList);  [Item(sku=1, price=100, quantity=1),
-//                                                Item(sku=1, price=100, quantity=1),
-//                                                Item(sku=1, price=100, quantity=1),
-//                                                Item(sku=1, price=100, quantity=1),
-//                                                Item(sku=1, price=100, quantity=1)]
-
-        //        System.out.println(schemeSkus);  [[1, 2, 3, 4], [5, 6, 7, 8]]
 
         return receiptItemsList;
     }
-//
-//    private Integer numberOfStamps(List<Item> receiptItemsList) {
-//
-//    }
-
-
-    public List calculateStamps(List<Scheme> schemeAvail, Receipt receipt) {
-
-        List skusFromScheme = getSkuFromSchemeList(schemeAvail);
-        List itemsFromReceipt = getItemsListFromReceipt(receipt);
-
-        for(int i = 0; i < itemsFromReceipt.size(); i++ ){
-            String skuOnReceipt = ((Item) itemsFromReceipt.get(i)).getSku();
-            for (int x = 0; x < ((ArrayList)skusFromScheme.get(i)).size(); x++ ){
-                if (((ArrayList) skusFromScheme.get(i)).get(x).equals(skuOnReceipt) {
-
-                }
-            }
-        }
-
-        // compare items
-//        itemFromReceipt.forEach((n) -> System.out.println(n));
-
-        return skusFromScheme;
-    }
-
-    //    Receipt(id=e6b1da05-050e-4463-b981-72793d4977ac,
-//            accountId=33f862b4-3f02-47e0-b9b7-d7e44cf5716e,
-//            merchantId=c8ed317f-c27d-4415-a80b-188b23047294,
-//            items=[
-//            Item(sku=1, price=100, quantity=1),
-//            Item(sku=2, price=200, quantity=1),
-//            Item(sku=1, price=100, quantity=1),
-//            Item(sku=1, price=100, quantity=1),
-//            Item(sku=1, price=100, quantity=1)])
 
     private boolean schemesAvailForMerchant(List<Scheme> schemes, Receipt receipt) {
         for (int i = 0; i < schemes.size(); i++ ) {
             UUID schemeMerchantId = schemes.get(i).getMerchantId();
             UUID receiptMerchantId = receipt.getMerchantId();
-            if (schemeMerchantId == receiptMerchantId) {
-               true;
-            } else {
-                false;
+            if (schemeMerchantId.equals(receiptMerchantId)) {
+               return true;
             }
         }
+        return false;
     }
+
+    public Integer calculateStamps(List<Scheme> schemeAvail, Receipt receipt) {
+        Integer stamps = 0;
+        List skusFromScheme = getSkuFromSchemeList(schemeAvail);
+        List itemsFromReceipt = getItemsListFromReceipt(receipt);
+
+        for(int i = 0; i < skusFromScheme.size(); i++ ) {
+            int maxStamps = schemeAvail.get(i).getMaxStamps();
+            currentSchemeId = schemeAvail.get(i).getId();
+            List skuFromScheme = ((ArrayList) skusFromScheme.get(i));
+            for(int x = 0; x < itemsFromReceipt.size(); x++) {
+                if (skuFromScheme.contains(((Item) itemsFromReceipt.get(x)).getSku())) {
+                    itemsFromReceiptOnScheme.add((Item) itemsFromReceipt.get(x));
+                    stamps++;
+                }
+            }
+            if (stamps > maxStamps) {
+                awardReward();
+                return capStamps(maxStamps, stamps);
+            }
+        }
+        stampsCount = stamps;
+        return stamps;
+    }
+
+    private void awardReward() {
+        long price = itemsFromReceiptOnScheme.stream()
+                .sorted(Comparator.comparing(Item::getPrice))
+                .findFirst()
+                .get()
+                .getPrice();
+
+        rewardsGiven.add(price);
+    }
+
+    private Integer capStamps(int maxStamps, Integer stamps) {
+        stampsCount = 0;
+        return stamps - (stamps % maxStamps);
+    }
+
 
     @NotNull
     @Override
     public List<ApplyResponse> apply(@NotNull Receipt receipt) {
+        Integer stampsGiven = 0;
+
+        List<ApplyResponse> applyResponses = new ArrayList<>();
+
         List<Scheme> schemesAvail = getSchemes();
-//        System.out.println(schemeAvail);  [{"skus":["1","2","3","4"],"SchemeId":"10000000000","merchantId":"010101010101","maxStamps":"4"},
-//                                          {"skus":["5","6","7","8"],"SchemeId":"20000000000","merchantId":"010101010101","maxStamps":"4"}]
-        boolean lucky = schemesAvailForMerchant(schemesAvail, receipt);
 
-        calculateStamps(schemesAvail, receipt);
-        ApplyResponse response = new ApplyResponse(receipt.getMerchantId(), 1, 1, new ArrayList<>());
-        List<ApplyResponse> responses = new ArrayList<>();
-        responses.add(response);
-
-        return responses;
+        if (schemesAvailForMerchant(schemesAvail, receipt)) {
+            stampsGiven = calculateStamps(schemesAvail, receipt);
+            ApplyResponse applyResponse = new ApplyResponse(receipt.getMerchantId(), stampsCount, stampsGiven,rewardsGiven);
+            applyResponses.add(applyResponse);
+        }
+        return applyResponses;
     }
 
     @NotNull
     @Override
     public List<StateResponse> state(@NotNull UUID accountId) {
-        return null;
+        List<StateResponse> stateResponses = new ArrayList<>();
+
+        StateResponse stateResponse = new StateResponse(currentSchemeId, stampsCount, rewardsGiven);
+        stateResponses.add(stateResponse);
+        return  stateResponses;
     }
 
     @Override
