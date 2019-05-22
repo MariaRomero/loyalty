@@ -15,7 +15,7 @@ import java.util.*;
 public class MyImplementation implements ImplementMe {
 
     List<Long> paymentsGiven = new ArrayList<>();
-    List<Item> itemsFromReceiptOnScheme = new ArrayList<>();
+    List<Item> earnedStampItems = new ArrayList<>();
     Integer stamps = 0;
     Integer stampsCount = 0;
     UUID currentSchemeId;
@@ -46,16 +46,16 @@ public class MyImplementation implements ImplementMe {
         return schemeAvail;
     }
 
-    private List<List<String>> getSkuFromSchemeList(List<Scheme> schemeAvail) {
+    private List<List<String>> getSkusFromScheme(List<Scheme> schemesAvail) {
 
         List<List<String>> schemeSkus = new ArrayList<>();
 
-        schemeAvail.stream().forEach(scheme -> schemeSkus.add(scheme.getSkus()));
+        schemesAvail.stream().forEach(scheme -> schemeSkus.add(scheme.getSkus()));
 
         return schemeSkus;
     }
 
-    private List<Item> getItemsListFromReceipt(Receipt receipt) {
+    private List<Item> getItemsFromReceipt(Receipt receipt) {
 
         List<Item> receiptItemsList = new ArrayList<>();
 
@@ -76,18 +76,18 @@ public class MyImplementation implements ImplementMe {
     }
 
     public Integer calculateStamps(List<Scheme> schemeAvail, Receipt receipt) {
-        List skusFromScheme = getSkuFromSchemeList(schemeAvail);
-        List itemsFromReceipt = getItemsListFromReceipt(receipt);
+        List skusFromScheme = getSkusFromScheme(schemeAvail);
+        List itemsFromReceipt = getItemsFromReceipt(receipt);
 
         for(int i = 0; i < skusFromScheme.size(); i++ ) {
             int maxStamps = schemeAvail.get(i).getMaxStamps();
             currentSchemeId = schemeAvail.get(i).getId();
-            List skuFromScheme = ((ArrayList) skusFromScheme.get(i));
+            List currentSkuList = ((ArrayList) skusFromScheme.get(i));
 
-            applyStamps(itemsFromReceipt, skuFromScheme);
+            applyStamps(itemsFromReceipt, currentSkuList);
 
             if (stamps > maxStamps) {
-                paymentsGiven.add(reward.awardReward(itemsFromReceiptOnScheme));
+                paymentsGiven.add(reward.awardReward(earnedStampItems));
                 return capStamps(maxStamps, stamps);
             }
         }
@@ -95,10 +95,10 @@ public class MyImplementation implements ImplementMe {
         return stamps;
     }
 
-    private void applyStamps(List itemsFromReceipt, List skuFromScheme) {
+    private void applyStamps(List itemsFromReceipt, List currentSkuList) {
         for(int x = 0; x < itemsFromReceipt.size(); x++) {
-            if (skuFromScheme.contains(((Item) itemsFromReceipt.get(x)).getSku())) {
-                itemsFromReceiptOnScheme.add((Item) itemsFromReceipt.get(x));
+            if (currentSkuList.contains(((Item) itemsFromReceipt.get(x)).getSku())) {
+                earnedStampItems.add((Item) itemsFromReceipt.get(x));
                 stamps++;
             }
         }

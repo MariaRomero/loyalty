@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Reward {
 
-    public Long awardReward(List<Item> itemsFromReceiptOnScheme) {
-        long price = itemsFromReceiptOnScheme.stream()
+    public Long awardReward(List<Item> earnedStampItems) {
+        long price = earnedStampItems.stream()
                 .sorted(Comparator.comparing(Item::getPrice))
                 .findFirst()
                 .get()
