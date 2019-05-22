@@ -14,7 +14,7 @@ import java.util.UUID
 
 class LoyaltySpec : StringSpec() {
 
-    val implementation: ImplementMe = MyImplementation()
+    val implementation: ImplementMe = LoyaltyScheme()
 
     init {
         "Applies a stamp" {
