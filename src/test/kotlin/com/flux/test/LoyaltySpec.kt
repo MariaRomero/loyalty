@@ -14,7 +14,7 @@ import java.util.UUID
 
 class LoyaltySpec : StringSpec() {
 
-    val implementation: ImplementMe = TODO("Create your instance here, if you are a Java person, drop the new keyword and the ;.  e.g. `new MyImpl();` becomes `MyImpl(schemes)`")
+    val implementation: ImplementMe = LoyaltyScheme()
 
     init {
         "Applies a stamp" {
@@ -29,8 +29,8 @@ class LoyaltySpec : StringSpec() {
         }
 
         "Triggers a redemption" {
-            val receipt =
-                Receipt(merchantId = merchantId, accountId = accountId, items = 1.rangeTo(5).map { Item("1", 100, 1) })
+            val receipt = Receipt(merchantId = merchantId, accountId = accountId, items = 1.rangeTo(5).map { Item("1", 100, 1) })
+
             val response = implementation.apply(receipt)
 
             response shouldHaveSize (1)
@@ -56,9 +56,9 @@ class LoyaltySpec : StringSpec() {
 
     companion object {
         private val accountId: AccountId = UUID.randomUUID()
-        private val merchantId: MerchantId = UUID.randomUUID()
+        private val merchantId: MerchantId = UUID.fromString("c8ed317f-c27d-4415-a80b-188b23047294")
 
-        private val schemeId: SchemeId = UUID.randomUUID()
+        private val schemeId: SchemeId = UUID.fromString("7dc53df5-703e-49b3-8670-b1c468f47f1f")
         private val schemes = listOf(Scheme(schemeId, merchantId, 4, listOf("1")))
     }
 

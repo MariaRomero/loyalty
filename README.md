@@ -15,7 +15,7 @@ In the real world - this would exist as a service, communicating over REST with 
 * Persistence is not required - the code should store it's state in memory and is not expected to survive restarts.
 * Multiple schemes can be running for one merchant concurrently.
 * When an account is due a payment the cheapest item in the scheme should be given away first.
-* Each item in a receipt can only be used once, one item cannot be used for both a stamp and a payment, nor can an item be used in multiple schemes.
+* Each item in a receipt can only be used once, one item cannot be used for both a stamp and a payment(reward), nor can an item be used in multiple schemes.
 
 
 ### Language
@@ -26,3 +26,8 @@ The boilerplate code given is written in Kotlin, the code you write is not expec
 This is a coding test - we want the focus to be on how the code is structured and making sure that corner cases have been thought about and covered.  We will be looking at style, structure, seperation of concerns and reusability of code.
 
 This means if the code is just one giant function - that is bad - but also if the code base contains a thousand classes which all do one line of code each - also bad.   
+
+
+
+###My Implementation
+In My Implementation of the Loyalty Scheme I have covered all the basic requirements, I decided not to cover all the corner cases because of time, but some will be covered by the code but not tested.
