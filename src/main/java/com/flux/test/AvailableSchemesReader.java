@@ -39,7 +39,7 @@ public class AvailableSchemesReader {
         return parser.parse(new FileReader("src/data/schemesAvailable.json"));
     }
 
-    public boolean schemeAvailForMerchant(Receipt receipt) {
+    public boolean schemeAvailForMerchant(final Receipt receipt) {
         for (int i = 0; i < schemeAvail.size(); i++ ) {
             UUID schemeMerchantId = schemeAvail.get(i).getMerchantId();
             UUID receiptMerchantId = receipt.getMerchantId();

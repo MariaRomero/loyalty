@@ -6,7 +6,7 @@ import java.util.List;
 public class ApplyReward {
 
     public Long apply(final List<Item> earnedStampItems) {
-        final long price = earnedStampItems.stream()
+        long price = earnedStampItems.stream()
                 .sorted(Comparator.comparing(Item::getPrice))
                 .findFirst()
                 .get()

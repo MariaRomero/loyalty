@@ -12,14 +12,14 @@ public class LoyaltyScheme implements ImplementMe {
     Stamps stamps = new Stamps();
     final AvailableSchemesReader schemesReader = new AvailableSchemesReader();
 
+    final List<Scheme> schemeAvailList = getSchemes();
     List<Long> paymentsGiven;
-    List<Scheme> schemeAvailList = getSchemes();
     UUID currentSchemeId;
     Integer stampsGiven;
     Integer stampsCount;
 
     @NotNull
-    private ApplyResponse generateApplyResponse(@NotNull Receipt receipt) {
+    private ApplyResponse generateApplyResponse(@NotNull final Receipt receipt) {
         stampsGiven = stamps.calculateStamps(schemeAvailList, receipt);
         stampsCount = stamps.getStampsCount();
         paymentsGiven = stamps.paymentsGiven;
@@ -28,14 +28,14 @@ public class LoyaltyScheme implements ImplementMe {
 
     @NotNull
     @Override
-    public List<ApplyResponse> apply(@NotNull Receipt receipt) {
-        List<ApplyResponse> applyResponses = new ArrayList<>();
+    public List<ApplyResponse> apply(@NotNull final Receipt receipt) {
+        List<ApplyResponse> applyResponseList = new ArrayList<>();
 
         if (schemesReader.schemeAvailForMerchant(receipt)) {
             ApplyResponse applyResponse = generateApplyResponse(receipt);
-            applyResponses.add(applyResponse);
+            applyResponseList.add(applyResponse);
         }
-        return applyResponses;
+        return applyResponseList;
     }
 
     @NotNull
@@ -54,7 +54,6 @@ public class LoyaltyScheme implements ImplementMe {
     @NotNull
     @Override
     public List<Scheme> getSchemes() {
-
         return schemesReader.getSchemeListFromFile();
     }
 

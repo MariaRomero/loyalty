@@ -7,9 +7,9 @@ import java.util.List;
 
 public class Skus {
 
-    public List<List<String>> getSkusFromScheme(List<Scheme> schemesAvail) {
+    public List<List<String>> getSkusFromScheme(final List<Scheme> schemesAvail) {
 
-        List<List<String>> schemeSkus = new ArrayList<>();
+        final List<List<String>> schemeSkus = new ArrayList<>();
 
         schemesAvail.stream().forEach(scheme -> schemeSkus.add(scheme.getSkus()));
 

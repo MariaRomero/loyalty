@@ -8,9 +8,9 @@ import java.util.List;
 
 public class ReceiptItems {
 
-    public List<Item> getItemsFromReceipt(Receipt receipt) {
+    public List<Item> getItemsFromReceipt(final Receipt receipt) {
 
-        List<Item> receiptItemsList = new ArrayList<>();
+        final List<Item> receiptItemsList = new ArrayList<>();
 
         receipt.getItems().stream().forEach(item -> receiptItemsList.add(item));
 

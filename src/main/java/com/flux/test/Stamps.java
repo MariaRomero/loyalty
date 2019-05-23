@@ -17,18 +17,18 @@ public class Stamps {
     List<Long> paymentsGiven = new ArrayList<>();
 
 
-    public Integer calculateStamps(List<Scheme> schemeAvail, Receipt receipt) {
-        Skus skus = new Skus();
-        ReceiptItems receiptItems = new ReceiptItems();
-        ApplyReward applyReward = new ApplyReward();
+    public Integer calculateStamps(final List<Scheme> schemeAvail,final Receipt receipt) {
+        final Skus skus = new Skus();
+        final ReceiptItems receiptItems = new ReceiptItems();
+        final ApplyReward applyReward = new ApplyReward();
 
-        List skusFromScheme = skus.getSkusFromScheme(schemeAvail);
-        List itemsFromReceipt = receiptItems.getItemsFromReceipt(receipt);
+        final List<List<String>> skusFromScheme = skus.getSkusFromScheme(schemeAvail);
+        final List<Item> itemsFromReceipt = receiptItems.getItemsFromReceipt(receipt);
 
         for(int i = 0; i < skusFromScheme.size(); i++ ) {
             int maxStamps = schemeAvail.get(i).getMaxStamps();
             currentSchemeId = schemeAvail.get(i).getId();
-            List currentSkuList = ((ArrayList) skusFromScheme.get(i));
+            List<String> currentSkuList = skusFromScheme.get(i);
 
             applyStamps(itemsFromReceipt, currentSkuList);
 
@@ -42,10 +42,10 @@ public class Stamps {
         return stamps;
     }
 
-    private void applyStamps(List itemsFromReceipt, List currentSkuList) {
-        for(int x = 0; x < itemsFromReceipt.size(); x++) {
-            if (currentSkuList.contains(((Item) itemsFromReceipt.get(x)).getSku())) {
-                earnedStampItems.add((Item) itemsFromReceipt.get(x));
+    private void applyStamps(final List itemsFromReceipt, List currentSkuList) {
+        for(int i = 0; i < itemsFromReceipt.size(); i++) {
+            if (currentSkuList.contains(((Item) itemsFromReceipt.get(i)).getSku())) {
+                earnedStampItems.add((Item) itemsFromReceipt.get(i));
                 stamps++;
             }
         }
