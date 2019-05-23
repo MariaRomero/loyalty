@@ -26,3 +26,8 @@ The boilerplate code given is written in Kotlin, the code you write is not expec
 This is a coding test - we want the focus to be on how the code is structured and making sure that corner cases have been thought about and covered.  We will be looking at style, structure, seperation of concerns and reusability of code.
 
 This means if the code is just one giant function - that is bad - but also if the code base contains a thousand classes which all do one line of code each - also bad.   
+
+
+
+###My Implementation
+In My Implementation of the Loyalty Scheme I have covered all the basic requirements, I decided not to cover all the corner cases because of time, but some will be covered by the code but not tested.
